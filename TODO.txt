@@ -1,5 +1,5 @@
 - [x] scaffold: next.js, tailwind, graphql
-- [ ] setup layout/page
+- [x] setup layout/page
 - [ ] shipment form
   - [ ] details view
     - [ ] schema
