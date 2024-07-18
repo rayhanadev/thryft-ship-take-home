@@ -3,15 +3,15 @@
 - [ ] shipment form
   - [ ] details view
     - [x] ui
-    - [ ] check against schema
-    - [ ] launch confirmation modal
+    - [x] check against schema
+    - [x] launch confirmation modal
   - [ ] packages view
     - [ ] combobox with packages
     - [ ] packages list
       - [ ] edit package details
   - [x] errors/validation view
-  - [ ] confirmation modal
+  - [x] confirmation modal
   - [ ] submitted/summary page
 - [x] gql backend
   - [x] pull packages from db (going to hardcode json)
-- [ ] mobile design (can be built from the start)
+- [x] mobile design (can be built from the start)

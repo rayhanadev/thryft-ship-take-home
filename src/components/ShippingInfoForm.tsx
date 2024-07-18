@@ -5,6 +5,16 @@ import { z } from "zod";
 
 import { Button } from "components/ui/button";
 import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "components/ui/dialog";
+import {
   Form,
   FormControl,
   FormField,
@@ -24,35 +34,30 @@ import { ABBREVIATIONS_TO_STATES, STATES } from "lib/constants";
 
 const formSchema = z.object({
   username: z.string(),
-  products: z.array(z.object({ id: z.string(), quantity: z.number() })),
+  // products: z.array(z.object({ id: z.string(), quantity: z.number() })),
   email: z.string().email(),
   confirmEmail: z.string().email(),
   firstName: z.string(),
   lastName: z.string(),
   addressLine1: z.string(),
-  addressLine2: z.string(),
-  apartmentSuiteEtc: z.string(),
+  addressLine2: z.string().optional(),
+  apartmentSuiteEtc: z.string().optional(),
   city: z.string(),
   state: z.string(),
-  zipCode: z.string().refine((zip) => zip.length === 5, {
-    message: "Zip code must be 5 digits",
-  }),
+  zipCode: z
+    .string()
+    .refine((zip) => zip.length === 5, {
+      message: "Zip code must be 5 digits",
+    })
+    .refine((zip) => /^\d+$/.test(zip), {
+      message: "Zip code must be a number",
+    }),
 });
 
 export function ShippingInfoFormDesktop() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      confirmEmail: "",
-      firstName: "",
-      lastName: "",
-      addressLine1: "",
-      apartmentSuiteEtc: "",
-      city: "",
-      zipCode: "",
-    },
+    mode: "onBlur",
   });
 
   function onSubmit(_values: z.infer<typeof formSchema>) {
@@ -82,7 +87,6 @@ export function ShippingInfoFormDesktop() {
           {/* TODO(rayhanadev): add packages view */}
           <div className="w-full"></div>
         </div>
-
         <div className="flex w-full flex-row items-start justify-between gap-2">
           <FormField
             control={form.control}
@@ -91,7 +95,7 @@ export function ShippingInfoFormDesktop() {
               <FormItem className="w-full">
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input {...field} required />
+                  <Input {...field} type="email" required />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -104,14 +108,13 @@ export function ShippingInfoFormDesktop() {
               <FormItem className="w-full">
                 <FormLabel>Confirm Email</FormLabel>
                 <FormControl>
-                  <Input {...field} required />
+                  <Input {...field} type="email" required />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-
         <div className="flex w-full flex-row items-start justify-between gap-2">
           <FormField
             control={form.control}
@@ -140,7 +143,6 @@ export function ShippingInfoFormDesktop() {
             )}
           />
         </div>
-
         <div className="flex w-full flex-col items-start justify-start gap-2">
           <FormField
             control={form.control}
@@ -201,10 +203,7 @@ export function ShippingInfoFormDesktop() {
                     </FormControl>
                     <SelectContent>
                       {STATES.map((state) => (
-                        <SelectItem
-                          key={state.toLowerCase()}
-                          value={state.toLowerCase()}
-                        >
+                        <SelectItem key={state.toLowerCase()} value={state}>
                           {state}
                         </SelectItem>
                       ))}
@@ -229,13 +228,51 @@ export function ShippingInfoFormDesktop() {
             />
           </div>
         </div>
-
-        <Button
-          type="submit"
-          className="mx-auto bg-[#6366F1] px-6 font-semibold text-white hover:bg-[#4b4edd]"
-        >
-          Submit
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              className="mx-auto bg-[#6366F1] px-6 font-semibold text-white hover:bg-[#4b4edd]"
+              disabled={!form.formState.isValid}
+            >
+              Submit
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Shipping Details</DialogTitle>
+              <DialogDescription></DialogDescription>
+            </DialogHeader>
+            <div className="flex w-full flex-col items-start justify-start gap-1">
+              <p className="text-sm">
+                {form.getValues().firstName} {form.getValues().lastName}
+              </p>
+              <p className="text-sm">{form.getValues().addressLine1}</p>
+              {form.getValues().addressLine2 && (
+                <p className="text-sm">{form.getValues().addressLine2}</p>
+              )}
+              {form.getValues().apartmentSuiteEtc && (
+                <p className="text-sm">{form.getValues().apartmentSuiteEtc}</p>
+              )}
+              <p className="text-sm">
+                {form.getValues().city}, {form.getValues().state},{" "}
+                {form.getValues().zipCode}
+              </p>
+              <p className="text-sm">{form.getValues().email}</p>
+              {/* TODO: insert products view */}
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+              <Button
+                className="bg-[#6366F1] px-6 font-semibold text-white hover:bg-[#4b4edd]"
+                onClick={() => form.handleSubmit(onSubmit)()}
+              >
+                Confirm
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </form>
     </Form>
   );
@@ -244,17 +281,7 @@ export function ShippingInfoFormDesktop() {
 export function ShippingInfoFormMobile() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      confirmEmail: "",
-      firstName: "",
-      lastName: "",
-      addressLine1: "",
-      apartmentSuiteEtc: "",
-      city: "",
-      zipCode: "",
-    },
+    mode: "onBlur",
   });
 
   function onSubmit(_values: z.infer<typeof formSchema>) {
@@ -290,7 +317,7 @@ export function ShippingInfoFormMobile() {
             <FormItem className="w-full">
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input {...field} required />
+                <Input {...field} type="email" required />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -303,7 +330,7 @@ export function ShippingInfoFormMobile() {
             <FormItem className="w-full">
               <FormLabel>Confirm Email</FormLabel>
               <FormControl>
-                <Input {...field} required />
+                <Input {...field} type="email" required />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -400,10 +427,7 @@ export function ShippingInfoFormMobile() {
                     <SelectContent>
                       {Object.entries(ABBREVIATIONS_TO_STATES).map(
                         ([abbreviation, state]) => (
-                          <SelectItem
-                            key={abbreviation}
-                            value={state.toLowerCase()}
-                          >
+                          <SelectItem key={abbreviation} value={state}>
                             {abbreviation}
                           </SelectItem>
                         ),
@@ -430,12 +454,53 @@ export function ShippingInfoFormMobile() {
           </div>
         </div>
 
-        <Button
-          type="submit"
-          className="mx-auto bg-[#6366F1] px-6 font-semibold text-white hover:bg-[#4b4edd]"
-        >
-          Submit
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              className="mx-auto mt-2 bg-[#6366F1] px-6 font-semibold text-white hover:bg-[#4b4edd]"
+              disabled={!form.formState.isValid}
+            >
+              Submit
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Shipping Details</DialogTitle>
+              <DialogDescription></DialogDescription>
+            </DialogHeader>
+            <div className="flex w-full flex-col items-start justify-start gap-1">
+              <p className="text-sm">
+                {form.getValues().firstName} {form.getValues().lastName}
+              </p>
+              <p className="text-sm">{form.getValues().addressLine1}</p>
+              {form.getValues().addressLine2 && (
+                <p className="text-sm">{form.getValues().addressLine2}</p>
+              )}
+              {form.getValues().apartmentSuiteEtc && (
+                <p className="text-sm">{form.getValues().apartmentSuiteEtc}</p>
+              )}
+              <p className="text-sm">
+                {form.getValues().city}, {form.getValues().state},{" "}
+                {form.getValues().zipCode}
+              </p>
+              <p className="text-sm">{form.getValues().email}</p>
+              {/* TODO: insert products view */}
+            </div>
+            <DialogFooter className="flex w-full flex-col items-start justify-start gap-2">
+              <DialogClose asChild>
+                <Button variant="outline" className="w-full">
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button
+                className="w-full bg-[#6366F1] px-6 font-semibold text-white hover:bg-[#4b4edd]"
+                onClick={() => form.handleSubmit(onSubmit)()}
+              >
+                Confirm
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </form>
     </Form>
   );
