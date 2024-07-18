@@ -1,4 +1,6 @@
 "use client";
+import { useRouter } from "next/navigation";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -55,13 +57,16 @@ const formSchema = z.object({
 });
 
 export function ShippingInfoFormDesktop() {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
   });
 
   function onSubmit(_values: z.infer<typeof formSchema>) {
-    // TODO(rayhanadev): implement confirmation modal here
+    // TODO(rayhanadev): in the future some sort of API call would be made here
+    void router.push("/confirmed");
   }
 
   return (
@@ -265,8 +270,9 @@ export function ShippingInfoFormDesktop() {
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
               <Button
-                className="bg-[#6366F1] px-6 font-semibold text-white hover:bg-[#4b4edd]"
+                className="bg-[#] px-6 font-semibold text-white hover:bg-[#4b4edd]"
                 onClick={() => form.handleSubmit(onSubmit)()}
+                autoFocus={true}
               >
                 Confirm
               </Button>
@@ -279,14 +285,16 @@ export function ShippingInfoFormDesktop() {
 }
 
 export function ShippingInfoFormMobile() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
   });
 
-  function onSubmit(_values: z.infer<typeof formSchema>) {
-    // TODO(rayhanadev): implement confirmation modal here
-  }
+  const onSubmit = (_values: z.infer<typeof formSchema>) => {
+    // TODO(rayhanadev): in the future some sort of API call would be made here
+    void router.push("/confirmed");
+  };
 
   return (
     <Form {...form}>
