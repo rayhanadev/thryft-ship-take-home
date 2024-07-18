@@ -1,0 +1,17 @@
+- [ ] scaffold: next.js, tailwind, graphql
+- [ ] setup layout/page
+- [ ] shipment form
+  - [ ] details view
+    - [ ] schema
+    - [ ] address validation w/ google
+  - [ ] packages view
+    - [ ] research stripe, etc. payment page
+    - [ ] dropdown with packages (research amz)
+    - [ ] packages list
+      - [ ] edit package details
+  - [ ] errors/validation view
+  - [ ] confirmation modal
+  - [ ] submitted/summary page
+- [ ] gql backend
+  - [ ] pull packages from db (going to hardcode json)
+- [ ] mobile design (can be built from the start)
