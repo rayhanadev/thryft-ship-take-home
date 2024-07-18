@@ -2,14 +2,14 @@
 - [x] setup layout/page
 - [ ] shipment form
   - [ ] details view
-    - [ ] schema
-    - [ ] address validation w/ google
+    - [x] ui
+    - [ ] check against schema
+    - [ ] launch confirmation modal
   - [ ] packages view
-    - [ ] research stripe, etc. payment page
-    - [ ] dropdown with packages (research amz)
+    - [ ] combobox with packages
     - [ ] packages list
       - [ ] edit package details
-  - [ ] errors/validation view
+  - [x] errors/validation view
   - [ ] confirmation modal
   - [ ] submitted/summary page
 - [x] gql backend

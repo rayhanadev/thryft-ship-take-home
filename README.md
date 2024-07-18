@@ -22,7 +22,8 @@ proxy. The development client is available at [https://localhost](https://localh
 
 For production you will have to deploy the client and server separately. The client is currently
 running on Vercel using standard settings for Next.js. The server can be deployed anywhere with Docker
-support (I chose [fly.io](https://fly.io)) using the Dockerfile.
+support (I chose [fly.io](https://fly.io)) using the Dockerfile. For convenience everything should be
+setup with CI using Github Actions.
 
 ## Design choices
 
