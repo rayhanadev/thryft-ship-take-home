@@ -1,4 +1,4 @@
-export const schema = /* GraphQL */`
+export const schema = /* GraphQL */ `
   type Query {
     getAvailableProducts: [Product!]!
   }

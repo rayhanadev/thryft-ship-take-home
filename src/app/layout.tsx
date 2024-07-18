@@ -12,11 +12,14 @@ const fontSans = FontSans({
 
 export const metadata: Metadata = {
   title: "Thryft Ship Take Home Project",
-  description: "Submission for the Thryft Ship take home project as part of their SWE internship application.",
-  authors: [{
-    name: "Rayhan Noufal Arayilakath",
-    url: "https://rayhanadev.com",
-  }],
+  description:
+    "Submission for the Thryft Ship take home project as part of their SWE internship application.",
+  authors: [
+    {
+      name: "Rayhan Noufal Arayilakath",
+      url: "https://rayhanadev.com",
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -27,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning suppressContentEditableWarning>
       <body
-        className={`bg-background min-h-screen font-sans antialiased ${fontSans.variable}`}
+        className={`min-h-screen bg-background font-sans antialiased ${fontSans.variable}`}
       >
         <Navbar />
         {children}
