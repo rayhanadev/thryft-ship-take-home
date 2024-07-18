@@ -10,7 +10,9 @@ export const env = createEnv({
       .default("development"),
   },
   client: {
-    NEXT_PUBLIC_GRAPHQL_ENDPOINT: z.string(),
+    NEXT_PUBLIC_GRAPHQL_ENDPOINT: z
+      .string()
+      .default("http://localhost/graphql"),
   },
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
