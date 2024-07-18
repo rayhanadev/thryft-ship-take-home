@@ -1,4 +1,4 @@
-- [ ] scaffold: next.js, tailwind, graphql
+- [x] scaffold: next.js, tailwind, graphql
 - [ ] setup layout/page
 - [ ] shipment form
   - [ ] details view
@@ -12,6 +12,6 @@
   - [ ] errors/validation view
   - [ ] confirmation modal
   - [ ] submitted/summary page
-- [ ] gql backend
-  - [ ] pull packages from db (going to hardcode json)
+- [x] gql backend
+  - [x] pull packages from db (going to hardcode json)
 - [ ] mobile design (can be built from the start)
