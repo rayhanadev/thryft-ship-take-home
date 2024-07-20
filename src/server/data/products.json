@@ -2,14 +2,17 @@
   {
     "id": "0212a03e-3290-4c8d-a384-3b3c94ce4159",
     "name": "Test Product",
-    "image": "https://example.com",
+    "image": "/products/0212a03e-3290-4c8d-a384-3b3c94ce4159.jpg",
     "price": 100,
-    "variants": [{
-      "id": 1,
-      "name": "black"
-    }, {
-      "id": 2,
-      "name": "white"
-    }]
+    "variants": [
+      {
+        "id": 1,
+        "name": "black"
+      },
+      {
+        "id": 2,
+        "name": "white"
+      }
+    ]
   }
 ]

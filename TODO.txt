@@ -1,17 +1,22 @@
+Initial Todo:
 - [x] scaffold: next.js, tailwind, graphql
 - [x] setup layout/page
 - [ ] shipment form
-  - [ ] details view
+  - [x] details view
     - [x] ui
     - [x] check against schema
     - [x] launch confirmation modal
-  - [ ] packages view
-    - [ ] combobox with packages
-    - [ ] packages list
-      - [ ] edit package details
+  - [x] packages view
+    - [x] combobox with packages
+    - [x] packages list
+      - [x] edit package details
   - [x] errors/validation view
   - [x] confirmation modal
-  - [ ] submitted/summary page
+  - [x] submitted/summary page
 - [x] gql backend
   - [x] pull packages from db (going to hardcode json)
 - [x] mobile design (can be built from the start)
+
+
+- [ ] add custom svg art
+- [ ] add quantity counter

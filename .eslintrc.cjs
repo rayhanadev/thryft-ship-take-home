@@ -63,7 +63,7 @@ const config = {
             position: "after",
           },
           {
-            pattern: "^(~|assets|components|hooks|lib|styles)(/.*|$)",
+            pattern: "^(~|assets|components|hooks|lib|stores|styles)(/.*|$)",
             group: "internal",
             position: "after",
           },

@@ -17,6 +17,8 @@
     "add:ui": "shadcn-ui add"
   },
   "dependencies": {
+    "@apollo/client": "^3.10.8",
+    "@apollo/experimental-nextjs-app-support": "^0.11.2",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-icons": "^1.3.0",
@@ -28,6 +30,8 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
+    "jotai": "^2.9.0",
+    "lucide-react": "^0.408.0",
     "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18",

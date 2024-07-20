@@ -1,6 +1,7 @@
 export const schema = /* GraphQL */ `
   type Query {
     getAvailableProducts: [Product!]!
+    getProductById(id: String!): Product
   }
 
   type Variant {
