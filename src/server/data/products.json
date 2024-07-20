@@ -7,11 +7,27 @@
     "variants": [
       {
         "id": 1,
-        "name": "black"
+        "name": "Black"
       },
       {
         "id": 2,
-        "name": "white"
+        "name": "White"
+      }
+    ]
+  },
+  {
+    "id": "c0026cac-c4fe-49b1-b826-fb1bbe0ca860",
+    "name": "Test Product 2",
+    "image": "/products/c0026cac-c4fe-49b1-b826-fb1bbe0ca860.jpg",
+    "price": 200,
+    "variants": [
+      {
+        "id": 1,
+        "name": "Black"
+      },
+      {
+        "id": 2,
+        "name": "White"
       }
     ]
   }

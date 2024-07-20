@@ -19,4 +19,4 @@ Initial Todo:
 
 
 - [ ] add custom svg art
-- [ ] add quantity counter
+- [x] add quantity counter

@@ -7,10 +7,9 @@ import { useRouter } from "next/navigation";
 import { useSuspenseQuery, type TypedDocumentNode, gql } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronsUpDownIcon } from "lucide-react";
-import { useForm, type UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { ProductSelect } from "components/ProductSelect";
 import { Button } from "components/ui/button";
 import {
   Dialog,
@@ -39,145 +38,12 @@ import {
   SelectValue,
 } from "components/ui/select";
 import { ABBREVIATIONS_TO_STATES, STATES } from "lib/constants";
+import { useCartItemsStore } from "stores/cartItems";
 
-const GET_PRODUCTS_QUERY: TypedDocumentNode<{
-  getAvailableProducts: Array<{
-    id: string;
-    name: string;
-    price: number;
-    image: string;
-    variants: Array<{
-      id: number;
-      name: string;
-    }>;
-  }>;
-}> = gql`
-  query GetProductsQuery {
-    getAvailableProducts {
-      id
-      name
-      price
-      image
-      variants {
-        id
-        name
-      }
-    }
-  }
-`;
+import { ProductsSelectMenu } from "./ProductsSelectMenu";
 
-function ProductsSelectMenu({
-  form,
-}: {
-  form: UseFormReturn<
-    z.infer<typeof formSchema>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    undefined
-  >;
-}) {
-  const { data } = useSuspenseQuery(GET_PRODUCTS_QUERY);
-
-  const options = data.getAvailableProducts.reduce(
-    (acc, product) => {
-      const variants = product.variants.map((variant) => ({
-        value: `${product.id}-${variant.id}`,
-        label: (
-          <div className="flex flex-row items-start justify-start gap-8">
-            <Image
-              src={product.image}
-              alt={product.name}
-              width={60}
-              height={60}
-            />
-            <div className="flex flex-col items-start justify-start">
-              <p className="font-semibold">{product.name}</p>
-              <p className="text-sm text-zinc-600">{variant.name}</p>
-              <p className="text-sm text-zinc-600">${product.price}</p>
-            </div>
-          </div>
-        ),
-      }));
-
-      return [...acc, ...variants];
-    },
-    [] as Array<{ value: string; label: React.ReactNode }>,
-  );
-
-  return (
-    <FormField
-      control={form.control}
-      name="products"
-      render={({ field }) => (
-        <FormItem className="w-full">
-          <FormLabel>Products</FormLabel>
-          <ProductSelect
-            {...field}
-            selected={field.value}
-            onChange={field.onChange}
-            options={options}
-            className="sm:w-[510px]"
-          />
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-  );
-}
-
-const GET_PRODUCT_BY_ID_QUERY: TypedDocumentNode<{
-  getProductById: {
-    id: string;
-    name: string;
-    price: number;
-    image: string;
-    variants: Array<{
-      id: number;
-      name: string;
-    }>;
-  };
-}> = gql`
-  query GetProductById($id: String!) {
-    getProductById(id: $id) {
-      id
-      name
-      price
-      image
-      variants {
-        id
-        name
-      }
-    }
-  }
-`;
-
-function ProductListItem({ id, variant }: { id: string; variant: number }) {
-  const { data } = useSuspenseQuery(GET_PRODUCT_BY_ID_QUERY, {
-    variables: { id },
-  });
-
-  const product = data.getProductById;
-
-  console.log(product);
-
-  return (
-    <div className="flex flex-row items-start justify-start gap-8">
-      <Image src={product.image} alt={product.name} width={60} height={60} />
-      <div className="flex flex-col items-start justify-start">
-        <p className="font-semibold">{product.name}</p>
-        {/* TODO: add error handling here */}
-        <p className="text-sm text-zinc-600">
-          {product.variants.find((v) => v.id === variant)?.name}
-        </p>
-        <p className="text-sm text-zinc-600">${product.price}</p>
-      </div>
-    </div>
-  );
-}
-
-const formSchema = z.object({
+export const formSchema = z.object({
   username: z.string(),
-  products: z.array(z.string()),
   email: z.string().email(),
   confirmEmail: z.string().email(),
   firstName: z.string(),
@@ -199,12 +65,10 @@ const formSchema = z.object({
 
 export function ShippingInfoFormDesktop() {
   const router = useRouter();
+  const cartItems = useCartItemsStore((state) => state.cartItems);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
-    defaultValues: {
-      products: [],
-    },
   });
 
   function onSubmit(_values: z.infer<typeof formSchema>) {
@@ -248,7 +112,7 @@ export function ShippingInfoFormDesktop() {
               </FormItem>
             }
           >
-            <ProductsSelectMenu form={form} />
+            <ProductsSelectMenu />
           </Suspense>
         </div>
         <div className="flex w-full flex-row items-start justify-between gap-2">
@@ -396,7 +260,7 @@ export function ShippingInfoFormDesktop() {
           <DialogTrigger asChild>
             <Button
               className="mx-auto bg-[#6366F1] px-6 font-semibold text-white hover:bg-[#4b4edd]"
-              disabled={!form.formState.isValid}
+              disabled={!form.formState.isValid || cartItems.length === 0}
             >
               Submit
             </Button>
@@ -427,15 +291,10 @@ export function ShippingInfoFormDesktop() {
                 <p className="text-sm">{form.getValues().email}</p>
               </div>
               <div className="flex w-full flex-col items-start justify-start gap-2">
-                {form.getValues().products.map((product) => {
-                  const [variantId, ...productIdBits] = product
-                    .split("-")
-                    .reverse();
-                  const productId = productIdBits.reverse().join("-");
-
+                {cartItems.map((product) => {
                   return (
                     <Suspense
-                      key={product}
+                      key={product.id}
                       fallback={
                         <div className="flex flex-row items-start justify-start gap-8">
                           <div className="h-16 w-16 animate-pulse bg-gray-200" />
@@ -448,8 +307,8 @@ export function ShippingInfoFormDesktop() {
                       }
                     >
                       <ProductListItem
-                        id={productId}
-                        variant={parseInt(variantId ?? "0", 10)}
+                        id={product.id}
+                        variant={product.variant}
                       />
                     </Suspense>
                   );
@@ -476,6 +335,7 @@ export function ShippingInfoFormDesktop() {
 
 export function ShippingInfoFormMobile() {
   const router = useRouter();
+  const cartItems = useCartItemsStore((state) => state.cartItems);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
@@ -505,8 +365,25 @@ export function ShippingInfoFormMobile() {
             </FormItem>
           )}
         />
-        {/* TODO(rayhanadev): add packages view */}
-        <div className="w-full"></div>
+
+        <Suspense
+          fallback={
+            <FormItem className="w-full">
+              <FormLabel>Products</FormLabel>
+              <Button
+                variant="outline"
+                role="combobox"
+                className={`h-9 w-full justify-between`}
+                disabled={true}
+              >
+                <div className="flex flex-wrap gap-1">Loading...</div>
+                <ChevronsUpDownIcon className="h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </FormItem>
+          }
+        >
+          <ProductsSelectMenu />
+        </Suspense>
 
         <FormField
           control={form.control}
@@ -656,7 +533,7 @@ export function ShippingInfoFormMobile() {
           <DialogTrigger asChild>
             <Button
               className="mx-auto mt-2 bg-[#6366F1] px-6 font-semibold text-white hover:bg-[#4b4edd]"
-              disabled={!form.formState.isValid}
+              disabled={!form.formState.isValid || cartItems.length === 0}
             >
               Submit
             </Button>
@@ -666,23 +543,50 @@ export function ShippingInfoFormMobile() {
               <DialogTitle>Confirm Shipping Details</DialogTitle>
               <DialogDescription></DialogDescription>
             </DialogHeader>
-            <div className="flex w-full flex-col items-start justify-start gap-1">
-              <p className="text-sm">
-                {form.getValues().firstName} {form.getValues().lastName}
-              </p>
-              <p className="text-sm">{form.getValues().addressLine1}</p>
-              {form.getValues().addressLine2 && (
-                <p className="text-sm">{form.getValues().addressLine2}</p>
-              )}
-              {form.getValues().apartmentSuiteEtc && (
-                <p className="text-sm">{form.getValues().apartmentSuiteEtc}</p>
-              )}
-              <p className="text-sm">
-                {form.getValues().city}, {form.getValues().state},{" "}
-                {form.getValues().zipCode}
-              </p>
-              <p className="text-sm">{form.getValues().email}</p>
-              {/* TODO: insert products view */}
+            <div className="flex w-full flex-row items-start justify-between gap-2">
+              <div className="flex w-full flex-col items-start justify-start gap-1">
+                <p className="text-sm">
+                  {form.getValues().firstName} {form.getValues().lastName}
+                </p>
+                <p className="text-sm">{form.getValues().addressLine1}</p>
+                {form.getValues().addressLine2 && (
+                  <p className="text-sm">{form.getValues().addressLine2}</p>
+                )}
+                {form.getValues().apartmentSuiteEtc && (
+                  <p className="text-sm">
+                    {form.getValues().apartmentSuiteEtc}
+                  </p>
+                )}
+                <p className="text-sm">
+                  {form.getValues().city}, {form.getValues().state},{" "}
+                  {form.getValues().zipCode}
+                </p>
+                <p className="text-sm">{form.getValues().email}</p>
+              </div>
+              <div className="flex w-full flex-col items-start justify-start gap-2">
+                {cartItems.map((product) => {
+                  return (
+                    <Suspense
+                      key={product.id}
+                      fallback={
+                        <div className="flex flex-row items-start justify-start gap-8">
+                          <div className="h-16 w-16 animate-pulse bg-gray-200" />
+                          <div className="flex flex-col items-start justify-start">
+                            <p className="h-4 w-24 animate-pulse bg-gray-200 font-semibold" />
+                            <p className="h-4 w-24 animate-pulse bg-gray-200 text-sm" />
+                            <p className="h-4 w-24 animate-pulse bg-gray-200 text-sm" />
+                          </div>
+                        </div>
+                      }
+                    >
+                      <ProductListItem
+                        id={product.id}
+                        variant={product.variant}
+                      />
+                    </Suspense>
+                  );
+                })}
+              </div>
             </div>
             <DialogFooter className="flex w-full flex-col items-start justify-start gap-2">
               <DialogClose asChild>
@@ -701,5 +605,53 @@ export function ShippingInfoFormMobile() {
         </Dialog>
       </form>
     </Form>
+  );
+}
+
+const GET_PRODUCT_BY_ID_QUERY: TypedDocumentNode<{
+  getProductById: {
+    id: string;
+    name: string;
+    price: number;
+    image: string;
+    variants: Array<{
+      id: number;
+      name: string;
+    }>;
+  };
+}> = gql`
+  query GetProductById($id: String!) {
+    getProductById(id: $id) {
+      id
+      name
+      price
+      image
+      variants {
+        id
+        name
+      }
+    }
+  }
+`;
+
+function ProductListItem({ id, variant }: { id: string; variant: number }) {
+  const { data } = useSuspenseQuery(GET_PRODUCT_BY_ID_QUERY, {
+    variables: { id },
+  });
+
+  const product = data.getProductById;
+
+  return (
+    <div className="flex flex-row items-start justify-start gap-8">
+      <Image src={product.image} alt={product.name} width={60} height={60} />
+      <div className="flex flex-col items-start justify-start">
+        <p className="font-semibold">{product.name}</p>
+        {/* TODO: add error handling here */}
+        <p className="text-sm text-zinc-600">
+          {product.variants.find((v) => v.id === variant)?.name}
+        </p>
+        <p className="text-sm text-zinc-600">${product.price}</p>
+      </div>
+    </div>
   );
 }
