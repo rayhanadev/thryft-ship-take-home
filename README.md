@@ -70,3 +70,5 @@ page also helps with displaying items to users when they first open the website,
 engagement with the storefront.
 
 ## Closing Thoughts
+
+I look forward to meeting with y'all! :D
