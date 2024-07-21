@@ -64,6 +64,9 @@ similar to how Shop.com and Stripe.com have their e-checkout flows. This would b
 fact I was dying to do it – but for time reasons and to be as faithful to the design specifications as possible,
 I chose to omit this change.
 
+There's also a bug with Vercel and its static files cache causing the image on the confirmation page to not load
+(main reason is filename case sensitivity). A static assets cache purge would fix this.
+
 ## Alternative Approaches
 
 Ideally, I would feature the products on a separate page so the user mentally progresses from browsing and
