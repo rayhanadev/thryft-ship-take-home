@@ -15,7 +15,7 @@ home assignment. You can see my initial planning in [TODO.txt](./TODO.txt).
 
 This project is also available to preview at [https://thryft-ship-take-home.vercel.app/](https://thryft-ship-take-home.vercel.app/).
 
-[TODO: INSERT LOOM]
+Loom: https://www.loom.com/share/0736dce5b55047e0af42988101650e8f?sid=97e8b553-52fd-435b-95c7-ee31d7021ac2
 
 ## Usage
 
